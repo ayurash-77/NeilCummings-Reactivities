@@ -6,9 +6,10 @@ interface Props {
   activity: Activity | undefined
   closeForm: () => void
   createOrEdit: (activity: Activity) => void
+  submitting: boolean
 }
 
-export default function ActivityForm({activity: selectedActivity, closeForm, createOrEdit}: Props) {
+export default function ActivityForm({activity: selectedActivity, closeForm, createOrEdit, submitting}: Props) {
 
   const initialState = selectedActivity ?? {
     id: '',
@@ -34,13 +35,13 @@ export default function ActivityForm({activity: selectedActivity, closeForm, cre
   return (
     <Segment clearing>
       <Form autoComplete={'off'} onSubmit={handleSubmit}>
-        <Form.TextArea placeholder={'Title'} name={'title'} value={activity.title} onChange={handleInputChange}/>
+        <Form.Input placeholder={'Title'} name={'title'} value={activity.title} onChange={handleInputChange}/>
         <Form.TextArea placeholder={'Description'} name={'description'} value={activity.description} onChange={handleInputChange}/>
-        <Form.TextArea placeholder={'Category'} name={'category'} value={activity.category} onChange={handleInputChange}/>
-        <Form.TextArea placeholder={'Date'} name={'date'} value={activity.date} onChange={handleInputChange}/>
-        <Form.TextArea placeholder={'City'} name={'city'} value={activity.city} onChange={handleInputChange}/>
-        <Form.TextArea placeholder={'Venue'} name={'venue'} value={activity.venue} onChange={handleInputChange}/>
-        <Button floated={'right'} type={'submit'} content={'Submit'} positive/>
+        <Form.Input placeholder={'Category'} name={'category'} value={activity.category} onChange={handleInputChange}/>
+        <Form.Input placeholder={'Date'} name={'date'} type={'date'} value={activity.date} onChange={handleInputChange}/>
+        <Form.Input placeholder={'City'} name={'city'} value={activity.city} onChange={handleInputChange}/>
+        <Form.Input placeholder={'Venue'} name={'venue'} value={activity.venue} onChange={handleInputChange}/>
+        <Button floated={'right'} type={'submit'} content={'Submit'} loading={submitting} positive/>
         <Button floated={'right'} type={'button'} content={'Cancel'} onClick={closeForm}/>
       </Form>
     </Segment>
