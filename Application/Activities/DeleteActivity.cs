@@ -21,7 +21,7 @@ public class DeleteActivity
         {
             var activity = await _context.Activities.FindAsync(request.Id);
             _context.Remove(activity);
-            _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(cancellationToken);
             return Unit.Value;
         }
     }
