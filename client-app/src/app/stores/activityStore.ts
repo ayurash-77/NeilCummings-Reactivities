@@ -5,7 +5,7 @@ import { v4 as uuid } from 'uuid'
 
 export default class ActivityStore {
   activityRegistry = new Map<string, Activity>()
-  selectedActivity: Activity | undefined = undefined
+  selectedActivity?: Activity = undefined
   editMode = false
   loading = false
   loadingInitial = false
@@ -14,8 +14,22 @@ export default class ActivityStore {
     makeAutoObservable(this)
   }
 
+  get groupedActivities(): [string, Activity[]][] {
+    const sortedActivities = Array.from(this.activityRegistry.values()).sort((a, b) =>
+      Date.parse(a.date) - Date.parse(b.date))
+
+    return Object.entries(
+      sortedActivities.reduce((activities, activity) => {
+        const date = activity.date.split('T')[0]
+        activities[date] = activities[date] ? [...activities[date], activity] : [activity]
+        return activities
+      }, {} as { [key: string]: Activity[] }),
+    )
+  }
+
   get activitiesByDate() {
-    return Array.from(this.activityRegistry.values()).sort((a, b) => Date.parse(a.date) - Date.parse(b.date))
+    return Array.from(this.activityRegistry.values()).sort((a, b) =>
+      Date.parse(a.date) - Date.parse(b.date))
   }
 
   loadActivities = async () => {
@@ -26,8 +40,8 @@ export default class ActivityStore {
         this.setActivity(activity)
       })
       this.setLoadingInitial(false)
-    } catch (e) {
-      console.log(e)
+    } catch (error) {
+      console.log(error)
       this.setLoadingInitial(false)
     }
   }
@@ -45,8 +59,8 @@ export default class ActivityStore {
         runInAction(() => this.selectedActivity = activity)
         this.setLoadingInitial(false)
         return activity
-      } catch (e) {
-        console.log(e)
+      } catch (error) {
+        console.log(error)
         this.setLoadingInitial(false)
       }
     }
@@ -76,11 +90,9 @@ export default class ActivityStore {
         this.editMode = false
         this.loading = false
       })
-    } catch (e) {
-      console.log(e)
-      runInAction(() => {
-        this.loading = false
-      })
+    } catch (error) {
+      console.log(error)
+      runInAction(() => this.loading = false)
     }
   }
 
@@ -94,11 +106,9 @@ export default class ActivityStore {
         this.editMode = false
         this.loading = false
       })
-    } catch (e) {
-      console.log(e)
-      runInAction(() => {
-        this.loading = false
-      })
+    } catch (error) {
+      console.log(error)
+      runInAction(() => this.loading = false)
     }
   }
 
@@ -110,12 +120,13 @@ export default class ActivityStore {
         this.activityRegistry.delete(id)
         this.loading = false
       })
-    } catch (e) {
-      console.log(e)
+    } catch (error) {
+      console.log(error)
       runInAction(() => {
         this.loading = false
       })
     }
   }
-}
 
+
+}
